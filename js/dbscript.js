@@ -1,54 +1,32 @@
-var MongoClient = require('mongodb').MongoClient;
-var url = "mongodb://localhost:27017/";
+var oracledb = require('oracledb');
+global.st=-1;
 
-var getvalues = function (callback,username,passwd){
-    MongoClient.connect(url,function(err,db){
-        if(err){
-            return console.log(err);
-        }
-        var dbo = db.db("mydb");
-        var coll = dbo.collection("users");
-        coll.findOne({name:username,password:passwd},{_id:0,name:1,password:1},function(err,res){
-            if(err) throw err;
-            db.close();
-            return callback(res);
-        })
-    });
+var validator = function(username,password){
+    oracledb.getConnection(
+        {
+          user          : "system",
+          password      : "system",
+          connectString : "localhost/XE"
+        },
+        function(err, connection) {
+          if(err){
+              console.log(err);
+          }
+          connection.execute("SELECT * FROM users WHERE (username='abc'"+
+          "AND password='abc')",function(err,result){
+              if(err){
+                  console.log(err);
+              }
+              if(result.rows.length==0){
+                  global.st=0;
+              }
+              else{
+                  global.st=1;
+                  console.log(global.st);
+              }
+          })
+      });
+      return global.st;
 }
 
-var getitems = function(callback){
-    MongoClient.connect(url,function(err,db){
-        if(err){
-            return console.log(err);
-        }
-        var dbo = db.db("mydb");
-        var coll = dbo.collection("products");
-        coll.find({},{_id:0,name:1}).toArray(function(err,res){
-            if(err) throw err;
-            db.close();
-            return callback(res);
-        })
-    });
-}
-
-var getProfile = function(callback,username){
-    MongoClient.connect(url,function(err,db){
-        if(err){
-            return console.log(err);
-        }
-        var dbo = db.db("mydb");
-        var coll = dbo.collection("users");
-        coll.findOne({name:username},{_id:0,name:1},function(err,res){
-            if(err) throw err;
-            return callback(res);
-            db.close();
-        })
-    });
-}
-
-var methodExports = {
-    getval:getvalues,
-    getit:getitems,
-    getPr:getProfile
-}
-module.exports = methodExports;
+//console.log(validator("abc","abc"));
