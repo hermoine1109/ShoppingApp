@@ -1,4 +1,4 @@
-
+var product_name;
 (function ($) {
     "use strict";
 
@@ -217,14 +217,59 @@
     $('.btn-num-product-down').on('click', function(){
         var numProduct = Number($(this).next().val());
         if(numProduct > 0) $(this).next().val(numProduct - 1);
-    });
+		document.getElementById("totalofcart").value= Number(document.getElementById("prodqty1").value) + Number(document.getElementById("prodqty2").value);
+		//console.log(document.getElementById("prodqty2").value)
+	});
 
     $('.btn-num-product-up').on('click', function(){
         var numProduct = Number($(this).prev().val());
         $(this).prev().val(numProduct + 1);
+		document.getElementById("totalofcart").value= Number(document.getElementById("prodqty1").value) + Number(document.getElementById("prodqty2").value);
+    });
+	
+	 
+    /*================================================================
+
+    [Open Quick View]*/
+
+    $('.block2-btn').on('click', function(){
+         product_name= $(this).parent().parent().find(".js-name-b2").html();
+        var product_price= $(this).parent().parent().find(".stext-105").html();
+        var product_image= $(this).parent().parent().find(".block2-pic").html();
+        //$(this).find('li').attr('data-thumb', 'assets/img/active-nav-slide.png');
+        //var someimage = $(this).parent().parent().find(".block2-pic").getAttribute("src");
+        //var myimg = someimage.getElementsByTagName('img')[0];
+        //var mysrc = myimg.src;
+        //console.log(product_image);
+        
+        document.getElementById("showing_prod_name").innerHTML=" "+product_name;
+        document.getElementById("showing_prod_price").innerHTML=" "+product_price;
+        document.getElementById("showing_prod_image").innerHTML=""+product_image;
+        //document.getElementById("image-thumb").innerHTML=""+product_image;
+      
+    
     });
 
+
+
     /*==================================================================
+    [ Total Quantity in Cart ]*/
+	
+	// Here's my data model
+	/*var ViewModel = function(qty1,qty2) {
+    this.prodqty1= ko.observable(qty1);
+	this.prodqty2= ko.observable(qty2);
+   
+ 
+    this.carttot = ko.computed(function() {
+        // Knockout tracks dependencies automatically. It knows that qty1 depends on qty2 and totqty, because these get called when evaluating totqty.
+        return Number(this.prodqty1)+Number(this.prodqty2) ;
+    }, this);
+};
+ 
+	ko.applyBindings(new ViewModel("1","1"),document.getElementById("totalofcart")); // This makes Knockout get to work
+	
+	/*==================================================================
     [ Rating ]*/
     $('.wrap-rating').each(function(){
         var item = $(this).find('.item-rating');
